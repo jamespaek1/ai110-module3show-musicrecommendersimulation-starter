@@ -79,15 +79,15 @@ The biggest lesson was about bias. The dataset's genre distribution directly con
 ## Terminal Output
 
 ### Phase 3: Default Recommendations
-![Default Pop Recommendations](default_pop_recommendations.png)
+![Default Pop Recommendations](images/default_pop_recommendations.png)
 
 ### Phase 4: Diverse Profile Testing
 
-![Chill Lofi Recommendations](chill_lofi_recommendations.png)
+![Chill Lofi Recommendations](images/chill_lofi_recommendations.png)
 
-![Intense Rock Recommendations](intense_rock_recommendations.png)
+![Intense Rock Recommendations](images/intense_rock_recommendations.png)
 
-![Edge Case Recommendations](edge_case_recommendations.png)
+![Edge Case Recommendations](images/edge_case_recommendations.png)
 
 ### Experiment: Weight Shift
-![Experiment Weight Shift](experiment_weight_shift.png)
+![Experiment Weight Shift](images/experiment_weight_shift.png)
