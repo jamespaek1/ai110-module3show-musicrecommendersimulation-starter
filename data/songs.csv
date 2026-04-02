@@ -1,0 +1,21 @@
+id,title,artist,genre,mood,energy,tempo_bpm,valence,danceability,acousticness
+1,Sunshine Vibes,Luna Ray,pop,happy,0.8,120,0.9,0.85,0.2
+2,Midnight Drive,The Neons,synthwave,chill,0.6,100,0.5,0.7,0.1
+3,Raging Fire,Iron Wolves,rock,intense,0.95,150,0.4,0.5,0.15
+4,Lofi Dawn,Sleepy Beats,lofi,chill,0.3,75,0.6,0.4,0.9
+5,Dance Floor Anthem,DJ Spark,edm,happy,0.9,128,0.85,0.95,0.05
+6,Acoustic Sunset,Maple & Pine,folk,sad,0.35,90,0.45,0.3,0.95
+7,Neon Lights,Synthia,pop,happy,0.75,115,0.8,0.8,0.15
+8,Heavy Rain,Gloomy Skies,indie,sad,0.4,88,0.3,0.35,0.6
+9,Bass Quake,SubWoofer,edm,intense,0.95,140,0.55,0.85,0.05
+10,Golden Hour,Amber Tones,pop,chill,0.5,95,0.7,0.6,0.4
+11,Fury Road,Steel Venom,metal,intense,0.98,170,0.25,0.35,0.08
+12,Ocean Breeze,Coral Waves,lofi,chill,0.25,70,0.65,0.35,0.85
+13,Starlight Serenade,Luna Ray,r&b,happy,0.6,105,0.75,0.7,0.3
+14,Concrete Jungle,MC Flow,hip-hop,intense,0.8,130,0.5,0.75,0.1
+15,Campfire Stories,Maple & Pine,folk,chill,0.3,82,0.55,0.25,0.98
+16,Electric Pulse,DJ Spark,edm,happy,0.85,135,0.8,0.9,0.05
+17,Rainy Café,Sleepy Beats,jazz,sad,0.35,78,0.5,0.4,0.75
+18,Country Roads Home,Dusty Boots,country,happy,0.55,110,0.7,0.55,0.8
+19,Velvet Nights,Noir Ensemble,jazz,chill,0.4,92,0.6,0.5,0.65
+20,Shatter Point,Iron Wolves,rock,intense,0.9,155,0.35,0.55,0.12
