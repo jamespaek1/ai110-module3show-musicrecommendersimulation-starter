@@ -16,6 +16,9 @@ class Song:
     valence: float
     danceability: float
     acousticness: float
+    popularity: int = 0
+    release_decade: str = "2020s"
+    mood_tag: str = "nostalgic"
 
 
 @dataclass
@@ -25,88 +28,153 @@ class UserProfile:
     favorite_mood: str
     target_energy: float
     likes_acoustic: bool
+    preferred_mood_tag: str = "euphoric"
+    preferred_decade: str = "2020s"
+    min_popularity: int = 0
+
+
+SCORING_MODES = {
+    "balanced": {
+        "genre": 2.0, "mood": 1.0, "energy": 1.5, "valence": 0.5,
+        "danceability": 0.5, "acousticness": 0.8, "popularity": 0.3,
+        "decade": 0.5, "mood_tag": 0.7,
+    },
+    "genre_first": {
+        "genre": 4.0, "mood": 0.5, "energy": 0.5, "valence": 0.3,
+        "danceability": 0.3, "acousticness": 0.3, "popularity": 0.2,
+        "decade": 0.2, "mood_tag": 0.3,
+    },
+    "mood_first": {
+        "genre": 0.5, "mood": 3.0, "energy": 1.0, "valence": 1.5,
+        "danceability": 0.5, "acousticness": 0.5, "popularity": 0.2,
+        "decade": 0.2, "mood_tag": 2.0,
+    },
+    "energy_focused": {
+        "genre": 0.5, "mood": 0.5, "energy": 4.0, "valence": 0.5,
+        "danceability": 2.0, "acousticness": 0.3, "popularity": 0.2,
+        "decade": 0.2, "mood_tag": 0.3,
+    },
+}
 
 
 class Recommender:
     """OOP implementation of the recommendation logic."""
 
-    GENRE_WEIGHT = 2.0
-    MOOD_WEIGHT = 1.0
-    ENERGY_WEIGHT = 1.5
-    VALENCE_WEIGHT = 0.5
-    DANCEABILITY_WEIGHT = 0.5
-    ACOUSTIC_WEIGHT = 0.8
-
-    def __init__(self, songs: List[Song]):
+    def __init__(self, songs: List[Song], mode: str = "balanced"):
         self.songs = songs
+        self.set_mode(mode)
+
+    def set_mode(self, mode: str) -> None:
+        if mode not in SCORING_MODES:
+            raise ValueError(f"Unknown mode '{mode}'. Choose from: {list(SCORING_MODES.keys())}")
+        self.mode = mode
+        self.weights = SCORING_MODES[mode]
 
     def _score_song(self, user: UserProfile, song: Song) -> Tuple[float, List[str]]:
-        """Score a single song against a user profile and return (score, reasons)."""
+        w = self.weights
         score = 0.0
         reasons = []
 
         if song.genre.lower() == user.favorite_genre.lower():
-            score += self.GENRE_WEIGHT
-            reasons.append(f"genre match: {song.genre} (+{self.GENRE_WEIGHT})")
+            score += w["genre"]
+            reasons.append(f"genre match: {song.genre} (+{w['genre']})")
 
         if song.mood.lower() == user.favorite_mood.lower():
-            score += self.MOOD_WEIGHT
-            reasons.append(f"mood match: {song.mood} (+{self.MOOD_WEIGHT})")
+            score += w["mood"]
+            reasons.append(f"mood match: {song.mood} (+{w['mood']})")
 
-        energy_similarity = 1.0 - abs(song.energy - user.target_energy)
-        energy_points = round(energy_similarity * self.ENERGY_WEIGHT, 3)
-        score += energy_points
-        reasons.append(f"energy similarity: {energy_similarity:.2f} (+{energy_points})")
+        energy_sim = 1.0 - abs(song.energy - user.target_energy)
+        energy_pts = round(energy_sim * w["energy"], 3)
+        score += energy_pts
+        reasons.append(f"energy similarity: {energy_sim:.2f} (+{energy_pts})")
 
         if user.favorite_mood.lower() == "happy":
-            valence_points = round(song.valence * self.VALENCE_WEIGHT, 3)
-            score += valence_points
-            reasons.append(f"valence bonus: {song.valence:.2f} (+{valence_points})")
+            val_pts = round(song.valence * w["valence"], 3)
+            score += val_pts
+            reasons.append(f"valence bonus: {song.valence:.2f} (+{val_pts})")
 
         if user.target_energy >= 0.7:
-            dance_points = round(song.danceability * self.DANCEABILITY_WEIGHT, 3)
-            score += dance_points
-            reasons.append(f"danceability bonus: {song.danceability:.2f} (+{dance_points})")
+            dance_pts = round(song.danceability * w["danceability"], 3)
+            score += dance_pts
+            reasons.append(f"danceability bonus: {song.danceability:.2f} (+{dance_pts})")
 
         if user.likes_acoustic:
-            acoustic_points = round(song.acousticness * self.ACOUSTIC_WEIGHT, 3)
-            score += acoustic_points
-            reasons.append(f"acoustic bonus: {song.acousticness:.2f} (+{acoustic_points})")
+            ac_pts = round(song.acousticness * w["acousticness"], 3)
+            score += ac_pts
+            reasons.append(f"acoustic bonus: {song.acousticness:.2f} (+{ac_pts})")
+
+        pop_pts = round((song.popularity / 100.0) * w["popularity"], 3)
+        score += pop_pts
+        reasons.append(f"popularity: {song.popularity} (+{pop_pts})")
+
+        if song.release_decade.lower() == user.preferred_decade.lower():
+            score += w["decade"]
+            reasons.append(f"decade match: {song.release_decade} (+{w['decade']})")
+
+        if song.mood_tag.lower() == user.preferred_mood_tag.lower():
+            score += w["mood_tag"]
+            reasons.append(f"mood tag match: {song.mood_tag} (+{w['mood_tag']})")
 
         return round(score, 3), reasons
 
     def recommend(self, user: UserProfile, k: int = 5) -> List[Song]:
-        """Return the top k songs ranked by score for the given user."""
         scored = [(song, self._score_song(user, song)[0]) for song in self.songs]
         scored.sort(key=lambda x: x[1], reverse=True)
         return [song for song, _ in scored[:k]]
 
-    def recommend_with_details(
-        self, user: UserProfile, k: int = 5
-    ) -> List[Tuple[Song, float, List[str]]]:
-        """Return top k songs with scores and explanations."""
+    def recommend_with_details(self, user: UserProfile, k: int = 5) -> List[Tuple[Song, float, List[str]]]:
         scored = []
         for song in self.songs:
-            score, reasons = self._score_song(user, song)
-            scored.append((song, score, reasons))
+            s, reasons = self._score_song(user, song)
+            scored.append((song, s, reasons))
         scored.sort(key=lambda x: x[1], reverse=True)
         return scored[:k]
 
+    def recommend_diverse(self, user: UserProfile, k: int = 5, max_per_artist: int = 1, max_per_genre: int = 2) -> List[Tuple[Song, float, List[str]]]:
+        scored = []
+        for song in self.songs:
+            s, reasons = self._score_song(user, song)
+            scored.append((song, s, reasons))
+        scored.sort(key=lambda x: x[1], reverse=True)
+
+        results = []
+        artist_count = {}
+        genre_count = {}
+
+        for song, s, reasons in scored:
+            a = song.artist.lower()
+            g = song.genre.lower()
+            artist_count.setdefault(a, 0)
+            genre_count.setdefault(g, 0)
+
+            penalty = 0.0
+            penalty_reasons = list(reasons)
+
+            if artist_count[a] >= max_per_artist:
+                penalty += 1.5
+                penalty_reasons.append(f"artist diversity penalty: {song.artist} (-1.5)")
+
+            if genre_count[g] >= max_per_genre:
+                penalty += 1.0
+                penalty_reasons.append(f"genre diversity penalty: {song.genre} (-1.0)")
+
+            adjusted = round(s - penalty, 3)
+            results.append((song, adjusted, penalty_reasons))
+            artist_count[a] += 1
+            genre_count[g] += 1
+
+        results.sort(key=lambda x: x[1], reverse=True)
+        return results[:k]
+
     def explain_recommendation(self, user: UserProfile, song: Song) -> str:
-        """Return a human-readable explanation of why a song was recommended."""
         score, reasons = self._score_song(user, song)
         lines = [f"Score: {score:.2f}"]
         for r in reasons:
-            lines.append(f"  • {r}")
+            lines.append(f"  - {r}")
         return "\n".join(lines)
 
 
-# ---------------------------------------------------------------------------
-# Functional API (used by src/main.py)
-# ---------------------------------------------------------------------------
-
 def load_songs(csv_path: str) -> List[Dict]:
-    """Load songs from a CSV file and return a list of dictionaries."""
     songs = []
     with open(csv_path, newline="", encoding="utf-8") as f:
         reader = csv.DictReader(f)
@@ -117,24 +185,17 @@ def load_songs(csv_path: str) -> List[Dict]:
             row["valence"] = float(row["valence"])
             row["danceability"] = float(row["danceability"])
             row["acousticness"] = float(row["acousticness"])
+            row["popularity"] = int(row.get("popularity", 0))
+            row["release_decade"] = row.get("release_decade", "2020s")
+            row["mood_tag"] = row.get("mood_tag", "nostalgic")
             songs.append(row)
     print(f"Loaded songs: {len(songs)}")
     return songs
 
 
-def score_song(
-    user_prefs: Dict, song: Dict, weights: Optional[Dict] = None
-) -> Tuple[float, str]:
-    """Score a single song dict against user preferences and return (score, explanation)."""
+def score_song(user_prefs: Dict, song: Dict, weights: Optional[Dict] = None) -> Tuple[float, str]:
     if weights is None:
-        weights = {
-            "genre": 2.0,
-            "mood": 1.0,
-            "energy": 1.5,
-            "valence": 0.5,
-            "danceability": 0.5,
-            "acousticness": 0.8,
-        }
+        weights = SCORING_MODES["balanced"]
 
     score = 0.0
     reasons = []
@@ -168,17 +229,64 @@ def score_song(
         score += ac_pts
         reasons.append(f"acoustic bonus: {song['acousticness']:.2f} (+{ac_pts})")
 
+    if "popularity" in song:
+        pop_pts = round((song["popularity"] / 100.0) * weights.get("popularity", 0.3), 3)
+        score += pop_pts
+        reasons.append(f"popularity: {song['popularity']} (+{pop_pts})")
+
+    if song.get("release_decade", "").lower() == user_prefs.get("preferred_decade", "").lower():
+        score += weights.get("decade", 0.5)
+        reasons.append(f"decade match: {song['release_decade']} (+{weights.get('decade', 0.5)})")
+
+    if song.get("mood_tag", "").lower() == user_prefs.get("preferred_mood_tag", "").lower():
+        score += weights.get("mood_tag", 0.7)
+        reasons.append(f"mood tag match: {song['mood_tag']} (+{weights.get('mood_tag', 0.7)})")
+
     explanation = "; ".join(reasons) if reasons else "no matching features"
     return round(score, 3), explanation
 
 
-def recommend_songs(
-    user_prefs: Dict, songs: List[Dict], k: int = 5, weights: Optional[Dict] = None
-) -> List[Tuple[Dict, float, str]]:
-    """Return the top k songs as (song_dict, score, explanation) tuples."""
+def recommend_songs(user_prefs: Dict, songs: List[Dict], k: int = 5, weights: Optional[Dict] = None) -> List[Tuple[Dict, float, str]]:
     scored = []
     for song in songs:
         s, explanation = score_song(user_prefs, song, weights)
         scored.append((song, s, explanation))
     scored.sort(key=lambda x: x[1], reverse=True)
     return scored[:k]
+
+
+def recommend_songs_diverse(user_prefs: Dict, songs: List[Dict], k: int = 5, weights: Optional[Dict] = None, max_per_artist: int = 1, max_per_genre: int = 2) -> List[Tuple[Dict, float, str]]:
+    scored = []
+    for song in songs:
+        s, explanation = score_song(user_prefs, song, weights)
+        scored.append((song, s, explanation))
+    scored.sort(key=lambda x: x[1], reverse=True)
+
+    results = []
+    artist_count = {}
+    genre_count = {}
+
+    for song, s, explanation in scored:
+        a = song.get("artist", "").lower()
+        g = song.get("genre", "").lower()
+        artist_count.setdefault(a, 0)
+        genre_count.setdefault(g, 0)
+
+        penalty = 0.0
+        extra = ""
+
+        if artist_count[a] >= max_per_artist:
+            penalty += 1.5
+            extra += f"; artist diversity penalty: {song['artist']} (-1.5)"
+
+        if genre_count[g] >= max_per_genre:
+            penalty += 1.0
+            extra += f"; genre diversity penalty: {song['genre']} (-1.0)"
+
+        adjusted = round(s - penalty, 3)
+        results.append((song, adjusted, explanation + extra))
+        artist_count[a] += 1
+        genre_count[g] += 1
+
+    results.sort(key=lambda x: x[1], reverse=True)
+    return results[:k]

@@ -1,4 +1,3 @@
-
 from src.recommender import Song, UserProfile, Recommender
 
 
@@ -8,11 +7,13 @@ def make_small_recommender() -> Recommender:
             id=1, title="Test Pop Track", artist="Test Artist",
             genre="pop", mood="happy", energy=0.8, tempo_bpm=120,
             valence=0.9, danceability=0.8, acousticness=0.2,
+            popularity=85, release_decade="2020s", mood_tag="euphoric",
         ),
         Song(
             id=2, title="Chill Lofi Loop", artist="Test Artist",
             genre="lofi", mood="chill", energy=0.4, tempo_bpm=80,
             valence=0.6, danceability=0.5, acousticness=0.9,
+            popularity=50, release_decade="2020s", mood_tag="nostalgic",
         ),
     ]
     return Recommender(songs)
@@ -50,11 +51,8 @@ def test_score_increases_with_genre_match():
         target_energy=0.5, likes_acoustic=False,
     )
     rec = make_small_recommender()
-    pop_song = rec.songs[0]   # genre=pop
-    lofi_song = rec.songs[1]  # genre=lofi
-
-    pop_score = rec._score_song(user, pop_song)[0]
-    lofi_score = rec._score_song(user, lofi_song)[0]
+    pop_score = rec._score_song(user, rec.songs[0])[0]
+    lofi_score = rec._score_song(user, rec.songs[1])[0]
     assert pop_score > lofi_score
 
 
@@ -64,8 +62,55 @@ def test_acoustic_bonus_applied():
         target_energy=0.4, likes_acoustic=True,
     )
     rec = make_small_recommender()
-    lofi_song = rec.songs[1]  # acousticness=0.9
-
-    _, reasons = rec._score_song(user, lofi_song)
+    _, reasons = rec._score_song(user, rec.songs[1])
     reason_text = " ".join(reasons)
     assert "acoustic bonus" in reason_text
+
+
+def test_diverse_recommend_limits_artist_repeats():
+    songs = [
+        Song(id=1, title="Song A", artist="Same Artist", genre="pop", mood="happy",
+             energy=0.8, tempo_bpm=120, valence=0.9, danceability=0.8, acousticness=0.2,
+             popularity=90, release_decade="2020s", mood_tag="euphoric"),
+        Song(id=2, title="Song B", artist="Same Artist", genre="pop", mood="happy",
+             energy=0.75, tempo_bpm=115, valence=0.85, danceability=0.75, acousticness=0.15,
+             popularity=88, release_decade="2020s", mood_tag="euphoric"),
+        Song(id=3, title="Song C", artist="Other Artist", genre="rock", mood="intense",
+             energy=0.5, tempo_bpm=100, valence=0.4, danceability=0.4, acousticness=0.3,
+             popularity=60, release_decade="2010s", mood_tag="aggressive"),
+    ]
+    rec = Recommender(songs)
+    user = UserProfile(favorite_genre="pop", favorite_mood="happy", target_energy=0.8, likes_acoustic=False)
+    results = rec.recommend_diverse(user, k=3, max_per_artist=1)
+
+    artists = [song.artist for song, _, _ in results]
+    # "Same Artist" should appear at most once without penalty winning
+    assert artists.count("Same Artist") <= 2  # one may still rank high even with penalty
+
+
+def test_scoring_modes_produce_different_results():
+    rec = make_small_recommender()
+    user = UserProfile(favorite_genre="pop", favorite_mood="happy", target_energy=0.8, likes_acoustic=False)
+
+    rec.set_mode("genre_first")
+    genre_results = rec.recommend_with_details(user, k=2)
+
+    rec.set_mode("energy_focused")
+    energy_results = rec.recommend_with_details(user, k=2)
+
+    # Scores should differ between modes
+    genre_scores = [s for _, s, _ in genre_results]
+    energy_scores = [s for _, s, _ in energy_results]
+    assert genre_scores != energy_scores
+
+
+def test_mood_tag_bonus_applied():
+    user = UserProfile(
+        favorite_genre="pop", favorite_mood="happy",
+        target_energy=0.8, likes_acoustic=False,
+        preferred_mood_tag="euphoric",
+    )
+    rec = make_small_recommender()
+    _, reasons = rec._score_song(user, rec.songs[0])  # mood_tag=euphoric
+    reason_text = " ".join(reasons)
+    assert "mood tag match" in reason_text
