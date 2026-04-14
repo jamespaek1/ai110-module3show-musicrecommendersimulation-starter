@@ -2,7 +2,7 @@
 
 An AI-powered music recommendation system that takes natural language requests and returns personalized song suggestions using an agentic workflow with self-evaluation and refinement.
 
-> **📌 Loom walkthrough:** [INSERT YOUR LOOM LINK HERE]
+> **📌 Loom walkthrough:** [Zoom Walkthrough](https://drive.google.com/file/d/1vJC_TM2BZdmBrYoq_0XI7wY1aZxJcL_X/view?usp=sharing)
 
 ---
 
