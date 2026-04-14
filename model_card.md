@@ -1,122 +1,70 @@
-# 🎧 Model Card: Music Recommender Simulation
+# Model Card — Music Discovery Agent
 
-## 1. Model Name  
+## Model Overview
 
-VibeFinder 1.0
-
----
-
-## 2. Intended Use  
-
-Describe what your recommender is designed to do and who it is for. 
-
-Prompts:  
-
-- What kind of recommendations does it generate  
-- What assumptions does it make about the user  
-- Is this for real users or classroom exploration 
-
-This recommender suggests 3–5 songs from a small catalog based on a user's preferred genre, mood, and energy level. It is designed for classroom exploration of how content-based recommendation systems work. It is not intended for production use with real listeners.
+The Music Discovery Agent is an agentic AI system that extends a content-based music recommender. It uses a large language model (GPT-4o-mini) combined with a weighted scoring engine to convert natural language music requests into personalized song recommendations. The system includes a plan → act → evaluate → refine loop with confidence scoring and self-correction.
 
 ---
 
-## 3. How the Model Works  
+## AI Collaboration During Development
 
-Explain your scoring approach in simple language.  
+### How I Used AI
 
-Prompts:  
+I used AI (Claude) extensively during development as a design partner and coding assistant. My workflow involved describing the overall system goals and architecture, then iterating on individual modules with AI guidance. AI helped me:
 
-- What features of each song are used (genre, energy, mood, etc.)  
-- What user preferences are considered  
-- How does the model turn those into a score  
-- What changes did you make from the starter logic  
+- **Architecture design**: I described my Module 3 recommender and the agent extension idea. AI helped me break the system into clean, modular components (planner, recommender, explainer, evaluator, agent orchestrator) and suggested the refinement loop as a reliability feature.
+- **Code generation**: AI generated initial drafts of each module, which I then reviewed, tested, and modified to fit my specific needs.
+- **Test design**: AI suggested both unit tests and the batch test harness approach, including edge cases I hadn't considered (like contradictory user profiles).
 
-The system looks at each song in the catalog and asks a series of questions: Does this song's genre match what the user likes? Does the mood match? Is the energy level close to their target? Depending on the answers, it awards points. Genre matches are worth the most (2 points), mood matches add 1 point, and energy similarity contributes up to 1.5 points based on how close the values are. There are smaller bonuses for valence, danceability, and acousticness depending on the user's profile. After scoring every song, it sorts them from highest to lowest and returns the top results along with a plain-language explanation of why each song earned its score.
+### Helpful AI Suggestion
 
----
+**The confidence scoring formula.** When I described wanting to "measure how good the recommendations are," AI suggested a weighted multi-factor confidence score combining score coverage (how close to theoretical max), genre availability (catalog coverage), score spread (differentiation between results), and absolute score thresholds. This was more nuanced than the simple "top score / max score" approach I originally had in mind, and it gave the evaluator much better signal for deciding when to trigger refinement.
 
-## 4. Data  
+### Flawed AI Suggestion
 
-Describe the dataset the model uses.  
-
-Prompts:  
-
-- How many songs are in the catalog  
-- What genres or moods are represented  
-- Did you add or remove data  
-- Are there parts of musical taste missing in the dataset  
-
-The catalog contains 20 songs stored in data/songs.csv. Genres represented include pop, rock, edm, lofi, folk, metal, hip-hop, r&b, jazz, synthwave, indie, and country. Moods include happy, chill, sad, and intense. The original starter dataset had 10 songs and was expanded with 10 additional tracks to improve diversity. Pop is still slightly overrepresented (3 out of 20 songs). The dataset does not include any Latin, K-pop, classical, or African music genres, so users who prefer those styles will receive poor recommendations.
+**Overly complex initial keyword parser.** AI's first version of the fallback keyword parser used a TF-IDF vectorizer from scikit-learn to match user queries against a pre-built vocabulary. While technically more sophisticated, it added a heavy dependency, was harder to debug, and actually performed worse on short inputs like "chill lofi" because TF-IDF penalizes common words. I scrapped it and replaced it with a simple dictionary-lookup approach that was more transparent, had zero dependencies, and gave me full control over exactly which keywords mapped to which genres and moods. The lesson was that simpler is often better — especially when explainability matters more than theoretical accuracy.
 
 ---
 
-## 5. Strengths  
+## Reflection on System Design
 
-Where does your system seem to work well  
+### Limitations
 
-Prompts:  
+1. **Tiny catalog**: The system only has 20 songs. In a real product, the scoring algorithm would need optimization for catalogs with millions of tracks — the current O(n) scan of every song would not scale.
 
-- User types for which it gives reasonable results  
-- Any patterns you think your scoring captures correctly  
-- Cases where the recommendations matched your intuition  
+2. **Binary genre matching**: "Rock" and "metal" get zero partial credit despite being closely related genres. A production system would use genre embeddings or a similarity matrix to capture these relationships.
 
-The system works well for users whose taste aligns neatly with a single genre and mood — for example, a "happy pop" listener or a "chill lofi" listener gets results that feel intuitively correct. The explanation feature makes the scoring transparent so users (and developers) can see exactly why a song was chosen. The modular design makes it easy to adjust weights and immediately see how the output changes.
+3. **Keyword fallback parser is naive**: Without an API key, the fallback parser uses simple keyword matching. It cannot understand nuanced requests like "something that sounds like Radiohead" or "music for a dinner party with friends."
 
----
+4. **No learning**: The system cannot learn from user feedback. Every request is independent — it has no memory of past interactions or preferences.
 
-## 6. Limitations and Bias 
+5. **Dataset bias**: Pop has the most songs (5) while metal has only 1. Users requesting underrepresented genres get worse recommendations through no fault of their own.
 
-Where the system struggles or behaves unfairly. 
+### Potential Misuse and Prevention
 
-Prompts:  
+- **Filter bubble reinforcement**: The system always recommends songs matching stated preferences, which could narrow a user's musical exposure over time. A future version could include a "discovery mode" that intentionally introduces variety.
+- **Bias amplification**: If the catalog overrepresents certain genres or cultural styles, the system systematically disadvantages users with different tastes. Prevention: regular audits of catalog diversity and recommendation distribution across user segments.
+- **Prompt injection**: A malicious user could craft inputs attempting to manipulate the LLM planner. The system mitigates this by validating all LLM outputs against known-valid genres and moods before use.
 
-- Features it does not consider  
-- Genres or moods that are underrepresented  
-- Cases where the system overfits to one preference  
-- Ways the scoring might unintentionally favor some users  
+### Testing Surprises
 
-The system does not consider lyrics, artist popularity, release date, or any social signals like what friends are listening to. Genre matching is all-or-nothing — "rock" and "metal" are treated as completely unrelated. The small catalog means the system has very few options to choose from, so recommendations can feel repetitive. Because pop has the most entries, users with pop preferences tend to get better-differentiated results than users who prefer underrepresented genres like jazz or country. The energy-based scoring also slightly favors mid-range energy songs since they are "close enough" to both high and low energy targets, which could create a subtle bias toward moderate-energy tracks.
+The biggest surprise was how well the system handled contradictory requests. I expected the "intense acoustic EDM" edge case to crash or return empty results, but it actually still produced a ranked list — the confidence score just dropped to 0.73, correctly signaling that the results were not a great fit. The evaluator caught the contradiction and flagged it, which is exactly what a guardrail should do. Another surprise was that the keyword fallback parser handled 10 out of 10 test harness queries correctly without needing the LLM at all. This made me realize that for a small, well-defined domain, a rule-based approach can be just as effective as an LLM — the LLM adds value mainly for ambiguous or creative requests. Finally, I was surprised that the refinement loop did not trigger during the standard test harness run because all confidence scores stayed above the 0.5 threshold with the full 20-song catalog. It only activated when I manually removed genres from the catalog during edge-case testing, which taught me that the threshold might need to be tuned higher for stricter quality control.
 
 ---
 
-## 7. Evaluation  
+## Ethical Considerations
 
-How you checked whether the recommender behaved as expected. 
-
-Prompts:  
-
-- Which user profiles you tested  
-- What you looked for in the recommendations  
-- What surprised you  
-- Any simple tests or comparisons you ran  
-
-Four user profiles were tested: High-Energy Pop Fan, Chill Lofi Listener, Intense Rock Lover, and an edge case combining sad mood with EDM genre and acoustic preference. For the first three profiles, the top results matched expectations — the pop fan saw pop songs, the lofi listener got lofi and folk tracks, and the rock lover received rock and metal. The edge-case profile produced uniformly low scores, which correctly reflected that no song in the catalog matches such a contradictory set of preferences. One experiment doubled the energy weight and halved the genre weight, which caused genre boundaries to blur and energy-similar songs from different genres to rise in rank. This confirmed that the weighting system is sensitive and that genre dominance can be tuned down if desired.
+- The system makes no claims about music quality — it ranks by feature similarity, not artistic merit.
+- Recommendations are transparent: every score breakdown is visible to the user.
+- The confidence score explicitly tells users when the system is uncertain, rather than presenting low-quality results as definitive.
+- No user data is collected, stored, or shared.
 
 ---
 
-## 8. Future Work  
+## Future Improvements
 
-Ideas for how you would improve the model next.  
-
-Prompts:  
-
-- Additional features or preferences  
-- Better ways to explain recommendations  
-- Improving diversity among the top results  
-- Handling more complex user tastes  
-
-If this project continued, I would add partial genre matching (so "rock" and "metal" share some credit), introduce a diversity penalty to prevent too many songs from the same artist appearing in the top results, expand the catalog to at least 100 songs across more genres, and add a simple web UI using Streamlit so users can adjust their preferences with sliders and see results update in real time. Supporting multiple users and comparing their profiles for "group playlist" generation would also be an interesting extension.
-
----
-
-## 9. Personal Reflection  
-
-A few sentences about your experience.  
-
-Prompts:  
-
-- What you learned about recommender systems  
-- Something unexpected or interesting you discovered  
-- How this changed the way you think about music recommendation apps  
-
-The most surprising thing was how much the dataset composition matters. Even with a well-designed scoring algorithm, the recommendations are only as diverse as the catalog itself. Building this also made me realize that the "magic" of Spotify's Discover Weekly is less about a single clever formula and more about the massive scale of data and continuous feedback loops. Using AI tools helped me brainstorm scoring strategies and debug edge cases quickly, but I still had to make judgment calls about what weights "felt right" — which reminded me that human intuition still plays a central role even in algorithmic systems.
+- Add collaborative filtering using listening history
+- Implement genre embeddings for partial-match scoring
+- Expand the catalog with a real music database API (e.g., Spotify)
+- Add a feedback loop where users can rate recommendations to improve future results
+- Support multi-language requests

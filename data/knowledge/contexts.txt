@@ -1,0 +1,20 @@
+CONTEXT: workout
+GUIDE: For workouts, prioritize tracks with high energy (0.7+), strong rhythmic drive, and tempo above 120 BPM. EDM and pop are the most reliable genres for sustained motivation. Songs with gradual builds work well for warm-ups, while peak-energy tracks suit the main set. Danceability above 0.7 correlates with good workout music. Avoid acoustic or low-energy tracks that break momentum.
+
+CONTEXT: studying
+GUIDE: Study music should be low-energy (below 0.4), instrumental or with minimal lyrics, and repetitive enough to fade into the background. Lofi hip-hop is the gold standard, but ambient jazz and soft classical also work well. Avoid songs with strong vocal hooks or sudden dynamic shifts — they pull attention away from the task. Acousticness above 0.6 often indicates good study-friendly tracks.
+
+CONTEXT: road_trip
+GUIDE: Road trip music needs variety and energy that matches the open road. The best playlists mix upbeat pop and rock with singalong potential. Mid-to-high energy (0.5-0.8) and high valence create the ideal driving atmosphere. Include familiar favorites alongside discoveries. Tempo between 100-130 BPM matches the natural rhythm of highway driving.
+
+CONTEXT: rainy_day
+GUIDE: Rainy day listening calls for gentle, reflective music. Low-to-mid energy tracks with high acousticness and emotional depth pair perfectly with the sound of rain. Sad and chill moods work best. Singer-songwriters, acoustic folk, and downtempo jazz create a cozy, contemplative atmosphere. Valence below 0.5 keeps the mood consistent with the weather.
+
+CONTEXT: party
+GUIDE: Party music demands high energy, high danceability, and positive vibes. Pop and EDM with strong beats and recognizable hooks keep the energy up. Valence above 0.7 ensures an upbeat atmosphere. Mix crowd-pleasers with fresh tracks to keep things interesting. Avoid sad, slow, or overly niche selections that could kill the mood.
+
+CONTEXT: sleep
+GUIDE: Sleep music should be the lowest energy available — below 0.3 ideally. Ambient textures, soft piano, and minimal beats help the mind wind down. Avoid any tracks with sudden volume changes, prominent vocals, or rhythmic complexity. Acousticness above 0.7 and very low danceability are good indicators. Lofi and ambient jazz excel in this context.
+
+CONTEXT: dinner
+GUIDE: Dinner music should create ambiance without dominating conversation. Jazz and bossa nova are classic choices, along with soft indie folk. Mid-low energy (0.3-0.5) and moderate acousticness create a sophisticated background. Avoid anything too loud, too sad, or too energetic. The music should complement the dining experience, not compete with it.

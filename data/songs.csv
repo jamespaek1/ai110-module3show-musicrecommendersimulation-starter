@@ -1,21 +1,21 @@
-id,title,artist,genre,mood,energy,tempo_bpm,valence,danceability,acousticness
-1,Sunshine Vibes,Luna Ray,pop,happy,0.8,120,0.9,0.85,0.2
-2,Midnight Drive,The Neons,synthwave,chill,0.6,100,0.5,0.7,0.1
-3,Raging Fire,Iron Wolves,rock,intense,0.95,150,0.4,0.5,0.15
-4,Lofi Dawn,Sleepy Beats,lofi,chill,0.3,75,0.6,0.4,0.9
-5,Dance Floor Anthem,DJ Spark,edm,happy,0.9,128,0.85,0.95,0.05
-6,Acoustic Sunset,Maple & Pine,folk,sad,0.35,90,0.45,0.3,0.95
-7,Neon Lights,Synthia,pop,happy,0.75,115,0.8,0.8,0.15
-8,Heavy Rain,Gloomy Skies,indie,sad,0.4,88,0.3,0.35,0.6
-9,Bass Quake,SubWoofer,edm,intense,0.95,140,0.55,0.85,0.05
-10,Golden Hour,Amber Tones,pop,chill,0.5,95,0.7,0.6,0.4
-11,Fury Road,Steel Venom,metal,intense,0.98,170,0.25,0.35,0.08
-12,Ocean Breeze,Coral Waves,lofi,chill,0.25,70,0.65,0.35,0.85
-13,Starlight Serenade,Luna Ray,r&b,happy,0.6,105,0.75,0.7,0.3
-14,Concrete Jungle,MC Flow,hip-hop,intense,0.8,130,0.5,0.75,0.1
-15,Campfire Stories,Maple & Pine,folk,chill,0.3,82,0.55,0.25,0.98
-16,Electric Pulse,DJ Spark,edm,happy,0.85,135,0.8,0.9,0.05
-17,Rainy Café,Sleepy Beats,jazz,sad,0.35,78,0.5,0.4,0.75
-18,Country Roads Home,Dusty Boots,country,happy,0.55,110,0.7,0.55,0.8
-19,Velvet Nights,Noir Ensemble,jazz,chill,0.4,92,0.6,0.5,0.65
-20,Shatter Point,Iron Wolves,rock,intense,0.9,155,0.35,0.55,0.12
+title,artist,genre,mood,energy,tempo_bpm,valence,danceability,acousticness
+Midnight Drive,The Neons,pop,happy,0.78,120,0.82,0.75,0.12
+Rainy Window,Lila Moon,pop,sad,0.35,88,0.25,0.40,0.55
+Electric Pulse,Volt Brothers,edm,energetic,0.95,140,0.70,0.90,0.05
+Chill Horizon,Skywave,lofi,chill,0.25,72,0.50,0.30,0.80
+Broken Strings,Ash Riven,rock,sad,0.60,100,0.20,0.35,0.30
+Neon Jungle,DJ Kora,edm,happy,0.88,132,0.85,0.92,0.03
+Velvet Dusk,Lila Moon,jazz,chill,0.30,95,0.55,0.45,0.70
+Morning Brew,The Acoustics,folk,happy,0.45,110,0.75,0.50,0.90
+Thunder Road,Iron Veil,rock,energetic,0.90,150,0.40,0.55,0.10
+Quiet Library,Skywave,lofi,chill,0.20,68,0.45,0.25,0.85
+Golden Hour,The Neons,pop,happy,0.65,115,0.80,0.70,0.25
+Lost Signal,Ash Riven,rock,sad,0.55,98,0.15,0.30,0.20
+Starlit Cafe,Bossa Crew,jazz,chill,0.35,100,0.60,0.50,0.75
+Bass Cathedral,DJ Kora,edm,energetic,0.92,145,0.65,0.88,0.02
+Campfire Song,The Acoustics,folk,happy,0.40,105,0.70,0.45,0.95
+Frostbite,Iron Veil,metal,energetic,0.95,170,0.15,0.40,0.05
+Daydream,Skywave,lofi,chill,0.22,70,0.55,0.28,0.82
+Paper Hearts,Lila Moon,pop,sad,0.38,92,0.30,0.42,0.50
+Saxophone Nights,Bossa Crew,jazz,happy,0.50,108,0.72,0.60,0.65
+Wildfire,The Neons,pop,energetic,0.82,128,0.78,0.80,0.08

@@ -1,15 +1,23 @@
-# Byte compiled
+# Python
 __pycache__/
 *.py[cod]
-*.pyo
-
-# Virtual environments
+*.egg-info/
+dist/
+build/
 .venv/
-env/
 venv/
 
-# OS files
-.DS_Store
+# Environment
+.env
 
-# Pytest cache
-.pytest_cache/
+# Logs
+logs/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+
+# OS
+.DS_Store
+Thumbs.db

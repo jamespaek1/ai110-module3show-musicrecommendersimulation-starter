@@ -1,0 +1,20 @@
+GENRE: pop
+GUIDE: Pop music is characterized by catchy melodies, polished production, and broad appeal. Modern pop draws from electronic, R&B, and indie influences. Pop works best for upbeat activities, social gatherings, and everyday listening. High-energy pop pairs well with workouts and driving, while mid-tempo pop suits casual hangouts and cooking. Related genres: synth-pop, indie pop, electropop, dance-pop.
+
+GENRE: rock
+GUIDE: Rock music centers on electric guitar, bass, and drums with emphasis on rhythm and attitude. It spans a wide spectrum from soft acoustic rock to heavy alternative. Rock is ideal for road trips, exercise, and moments that call for raw energy. Classic rock provides nostalgic warmth, while alternative rock offers introspective depth. Related genres: alternative, indie rock, punk, grunge, classic rock.
+
+GENRE: edm
+GUIDE: Electronic dance music (EDM) is built around synthesizers, drum machines, and heavy bass. It is designed to energize and move the listener. EDM excels in workout contexts, parties, and any situation demanding sustained high energy. Subgenres like house offer a steadier groove, while dubstep and drum-and-bass provide more intense drops. Related genres: house, techno, trance, dubstep, drum-and-bass.
+
+GENRE: lofi
+GUIDE: Lofi (low-fidelity) music features intentionally imperfect production — vinyl crackle, tape hiss, muffled beats — to create a warm, nostalgic atmosphere. It is the go-to genre for studying, reading, and focused work because its repetitive, unobtrusive patterns aid concentration without demanding attention. Lofi draws from hip-hop beats, jazz chords, and ambient textures. Related genres: chillhop, ambient, downtempo, trip-hop.
+
+GENRE: jazz
+GUIDE: Jazz is rooted in improvisation, swing rhythm, and complex harmony. It ranges from upbeat bebop to smooth lounge to experimental free jazz. Jazz suits sophisticated settings like dinner parties, cocktail hours, and late-night relaxation. Its harmonic richness rewards active listening but also works beautifully as background ambiance. Related genres: bossa nova, swing, bebop, smooth jazz, fusion.
+
+GENRE: folk
+GUIDE: Folk music prioritizes acoustic instruments, storytelling, and authenticity. It often features fingerpicked guitar, harmonica, and vocal harmonies. Folk is perfect for outdoor settings, morning routines, and quiet evenings. Its warmth and simplicity make it universally comforting. Modern indie folk blends traditional elements with contemporary production. Related genres: indie folk, Americana, country, singer-songwriter, bluegrass.
+
+GENRE: metal
+GUIDE: Metal is defined by heavy distortion, powerful drumming, and intense vocals. It delivers maximum energy and catharsis. Metal works best for high-intensity workouts, channeling frustration, and listeners who crave sonic extremity. The genre rewards devoted fans with incredible technical musicianship and emotional depth beneath the volume. Related genres: thrash metal, death metal, progressive metal, hard rock, metalcore.
